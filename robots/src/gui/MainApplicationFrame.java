@@ -2,31 +2,19 @@ package gui;
 
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.InputEvent;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import log.Logger;
 
-/**
- * Что требуется сделать:
- * 1. Метод создания меню перегружен функционалом и трудно читается. 
- * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
- */
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
@@ -50,7 +38,8 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
-        setJMenuBar(generateMenuBar());
+        // создание меню выделено в отдельный класс
+        setJMenuBar(new MainMenuBuilder(this).build());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
@@ -97,97 +86,8 @@ public class MainApplicationFrame extends JFrame
         desktopPane.add(frame);
         frame.setVisible(true);
     }
-    
-//    protected JMenuBar createMenuBar() {
-//        JMenuBar menuBar = new JMenuBar();
-// 
-//        //Set up the lone menu.
-//        JMenu menu = new JMenu("Document");
-//        menu.setMnemonic(KeyEvent.VK_D);
-//        menuBar.add(menu);
-// 
-//        //Set up the first menu item.
-//        JMenuItem menuItem = new JMenuItem("New");
-//        menuItem.setMnemonic(KeyEvent.VK_N);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_N, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("new");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-//
-//        //Set up the second menu item.
-//        menuItem = new JMenuItem("Quit");
-//        menuItem.setMnemonic(KeyEvent.VK_Q);
-//        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-//                KeyEvent.VK_Q, ActionEvent.ALT_MASK));
-//        menuItem.setActionCommand("quit");
-////        menuItem.addActionListener(this);
-//        menu.add(menuItem);
-// 
-//        return menuBar;
-//    }
-    
-    private JMenuBar generateMenuBar()
-    {
-        JMenuBar menuBar = new JMenuBar();
 
-        JMenu fileMenu = new JMenu(Localization.get("menu.file"));
-        fileMenu.setMnemonic(KeyEvent.VK_F);
-
-        JMenuItem exitItem = new JMenuItem(Localization.get("menu.exit"), KeyEvent.VK_Q);
-        exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
-        exitItem.addActionListener(e -> {
-            Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
-                    new WindowEvent(this, WindowEvent.WINDOW_CLOSING)
-            );
-        });
-        fileMenu.add(exitItem);
-
-        JMenu lookAndFeelMenu = new JMenu(Localization.get("menu.view"));
-        lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
-        lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                Localization.get("menu.view")
-        );
-
-        {
-            JMenuItem systemLookAndFeel = new JMenuItem(Localization.get("menu.view.system"), KeyEvent.VK_S);
-            systemLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(systemLookAndFeel);
-        }
-
-        {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem(Localization.get("menu.view.cross"), KeyEvent.VK_S);
-            crossplatformLookAndFeel.addActionListener((event) -> {
-                setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-                this.invalidate();
-            });
-            lookAndFeelMenu.add(crossplatformLookAndFeel);
-        }
-
-        JMenu testMenu = new JMenu(Localization.get("menu.tests"));
-        testMenu.setMnemonic(KeyEvent.VK_T);
-        testMenu.getAccessibleContext().setAccessibleDescription(
-                Localization.get("menu.tests")
-        );
-
-        {
-            JMenuItem addLogMessageItem = new JMenuItem(Localization.get("menu.tests.log"), KeyEvent.VK_S);
-            addLogMessageItem.addActionListener((event) -> {
-                Logger.debug("Новая строка");
-            });
-            testMenu.add(addLogMessageItem);
-        }
-
-        menuBar.add(fileMenu);
-        menuBar.add(lookAndFeelMenu);
-        menuBar.add(testMenu);
-        return menuBar;
-    }
-    
-    private void setLookAndFeel(String className)
+    public void setLookAndFeel(String className)
     {
         try
         {
