@@ -56,15 +56,23 @@ public class MainApplicationFrame extends JFrame
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                Object[] options = {"Закрыть", "Отмена"};
-                int result = JOptionPane.showOptionDialog( MainApplicationFrame.this,
-                        "Вы действительно хотите закрыть приложение?",
-                        "Подтверждение выхода",
+
+                Object[] options = {
+                        Localization.get("exit.ok"),
+                        Localization.get("exit.cancel")
+                };
+
+                int result = JOptionPane.showOptionDialog(
+                        MainApplicationFrame.this,
+                        Localization.get("exit.message"),
+                        Localization.get("exit.title"),
                         JOptionPane.YES_NO_OPTION,
                         JOptionPane.QUESTION_MESSAGE,
                         null,
                         options,
-                        options[1] );
+                        options[1]
+                );
+
                 if (result == JOptionPane.YES_OPTION) {
                     dispose();
                     System.exit(0);
@@ -80,7 +88,7 @@ public class MainApplicationFrame extends JFrame
         logWindow.setSize(300, 800);
         setMinimumSize(logWindow.getSize());
         logWindow.pack();
-        Logger.debug("Протокол работает");
+        Logger.debug(Localization.get("log.started"));
         return logWindow;
     }
     
@@ -106,7 +114,7 @@ public class MainApplicationFrame extends JFrame
 //        menuItem.setActionCommand("new");
 ////        menuItem.addActionListener(this);
 //        menu.add(menuItem);
-// 
+//
 //        //Set up the second menu item.
 //        menuItem = new JMenuItem("Quit");
 //        menuItem.setMnemonic(KeyEvent.VK_Q);
@@ -123,10 +131,10 @@ public class MainApplicationFrame extends JFrame
     {
         JMenuBar menuBar = new JMenuBar();
 
-        JMenu fileMenu = new JMenu("Файл");
+        JMenu fileMenu = new JMenu(Localization.get("menu.file"));
         fileMenu.setMnemonic(KeyEvent.VK_F);
 
-        JMenuItem exitItem = new JMenuItem("Выход", KeyEvent.VK_Q);
+        JMenuItem exitItem = new JMenuItem(Localization.get("menu.exit"), KeyEvent.VK_Q);
         exitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, InputEvent.CTRL_DOWN_MASK));
         exitItem.addActionListener(e -> {
             Toolkit.getDefaultToolkit().getSystemEventQueue().postEvent(
@@ -135,13 +143,14 @@ public class MainApplicationFrame extends JFrame
         });
         fileMenu.add(exitItem);
 
-        JMenu lookAndFeelMenu = new JMenu("Режим отображения");
+        JMenu lookAndFeelMenu = new JMenu(Localization.get("menu.view"));
         lookAndFeelMenu.setMnemonic(KeyEvent.VK_V);
         lookAndFeelMenu.getAccessibleContext().setAccessibleDescription(
-                "Управление режимом отображения приложения");
-        
+                Localization.get("menu.view")
+        );
+
         {
-            JMenuItem systemLookAndFeel = new JMenuItem("Системная схема", KeyEvent.VK_S);
+            JMenuItem systemLookAndFeel = new JMenuItem(Localization.get("menu.view.system"), KeyEvent.VK_S);
             systemLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
                 this.invalidate();
@@ -150,7 +159,7 @@ public class MainApplicationFrame extends JFrame
         }
 
         {
-            JMenuItem crossplatformLookAndFeel = new JMenuItem("Универсальная схема", KeyEvent.VK_S);
+            JMenuItem crossplatformLookAndFeel = new JMenuItem(Localization.get("menu.view.cross"), KeyEvent.VK_S);
             crossplatformLookAndFeel.addActionListener((event) -> {
                 setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
                 this.invalidate();
@@ -158,13 +167,14 @@ public class MainApplicationFrame extends JFrame
             lookAndFeelMenu.add(crossplatformLookAndFeel);
         }
 
-        JMenu testMenu = new JMenu("Тесты");
+        JMenu testMenu = new JMenu(Localization.get("menu.tests"));
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
-                "Тестовые команды");
-        
+                Localization.get("menu.tests")
+        );
+
         {
-            JMenuItem addLogMessageItem = new JMenuItem("Сообщение в лог", KeyEvent.VK_S);
+            JMenuItem addLogMessageItem = new JMenuItem(Localization.get("menu.tests.log"), KeyEvent.VK_S);
             addLogMessageItem.addActionListener((event) -> {
                 Logger.debug("Новая строка");
             });

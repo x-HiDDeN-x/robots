@@ -8,6 +8,7 @@ import javax.swing.UIManager;
 public class RobotsProgram
 {
     public static void main(String[] args) {
+        Localization.setLanguage(Localization.Lang.RU);
       try {
         UIManager.setLookAndFeel("javax.swing.plaf.nimbus.NimbusLookAndFeel");
 //        UIManager.setLookAndFeel("javax.swing.plaf.metal.MetalLookAndFeel");
