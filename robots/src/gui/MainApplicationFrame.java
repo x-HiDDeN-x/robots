@@ -18,7 +18,9 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    
+    // менеджер состояния окон
+    private final WindowStateManager stateManager;
+
     public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
@@ -38,7 +40,10 @@ public class MainApplicationFrame extends JFrame
         gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
-        // создание меню выделено в отдельный класс
+        // создаём менеджер состояния и загружаем состояние окон
+        stateManager = new WindowStateManager(desktopPane);
+        stateManager.load();
+
         setJMenuBar(new MainMenuBuilder(this).build());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -63,6 +68,7 @@ public class MainApplicationFrame extends JFrame
                 );
 
                 if (result == JOptionPane.YES_OPTION) {
+                    stateManager.save();
                     dispose();
                     System.exit(0);
                 }
