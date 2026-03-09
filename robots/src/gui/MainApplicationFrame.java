@@ -9,8 +9,8 @@ import java.awt.event.WindowEvent;
 import java.io.File;
 import javax.swing.*;
 
-public class MainApplicationFrame extends JFrame
-{
+public class MainApplicationFrame extends JFrame {
+
     private final JDesktopPane desktopPane = new JDesktopPane();
     private final WindowStateManager stateManager;
 
@@ -20,16 +20,22 @@ public class MainApplicationFrame extends JFrame
         setLocationRelativeTo(null);
         setContentPane(desktopPane);
 
+        RobotModel robotModel = new RobotModel();
+
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
-        GameWindow gameWindow = new GameWindow();
+        GameWindow gameWindow = new GameWindow(robotModel);
         addWindow(gameWindow);
+
+        RobotCoordinatesWindow coordsWindow = new RobotCoordinatesWindow(robotModel);
+        addWindow(coordsWindow);
 
         stateManager = new WindowStateManager();
         stateManager.register(new MainFrameStateful(this, stateManager));
         stateManager.register(new InternalFrameStateful(logWindow, stateManager));
         stateManager.register(new InternalFrameStateful(gameWindow, stateManager));
+        stateManager.register(new InternalFrameStateful(coordsWindow, stateManager));
 
         File stateFile = new File(System.getProperty("user.home"), ".robots.windows");
         boolean firstRun = !stateFile.exists();
@@ -44,6 +50,9 @@ public class MainApplicationFrame extends JFrame
 
             gameWindow.setLocation(540, 100);
             gameWindow.setSize(620, 540);
+
+            coordsWindow.setLocation(30, 30);
+            coordsWindow.setSize(300, 60);
         }
 
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -51,7 +60,6 @@ public class MainApplicationFrame extends JFrame
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-
                 Object[] options = {
                         Localization.get("exit.ok"),
                         Localization.get("exit.cancel")
@@ -77,23 +85,20 @@ public class MainApplicationFrame extends JFrame
         });
     }
 
-    public void setLookAndFeel(String className)
-    {
+    public void setLookAndFeel(String className) {
         try {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
         } catch (Exception ignored) {}
     }
 
-    protected LogWindow createLogWindow()
-    {
+    protected LogWindow createLogWindow() {
         LogWindow logWindow = new LogWindow(log.Logger.getDefaultLogSource());
         logWindow.setSize(300, 800);
         return logWindow;
     }
 
-    protected void addWindow(JInternalFrame frame)
-    {
+    protected void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
     }

@@ -2,19 +2,13 @@ package gui;
 
 import java.awt.BorderLayout;
 import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
 
-public class GameWindow extends JInternalFrame
-{
-    private final GameVisualizer visualizer;
+public class GameWindow extends JInternalFrame {
 
-    public GameWindow()
-    {
-        super(Localization.get("window.game"), true, true, true, true);
-        visualizer = new GameVisualizer();
-        JPanel panel = new JPanel(new BorderLayout());
-        panel.add(visualizer, BorderLayout.CENTER);
-        getContentPane().add(panel);
+    public GameWindow(RobotModel model) {
+        super("Game", true, true, true, true);
+        setLayout(new BorderLayout());
+        add(new GameVisualizer(model), BorderLayout.CENTER);
         pack();
     }
 }
