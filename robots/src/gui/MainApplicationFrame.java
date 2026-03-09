@@ -1,50 +1,51 @@
 package gui;
 
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import gui.windowstate.InternalFrameStateful;
+import gui.windowstate.MainFrameStateful;
+import gui.windowstate.WindowStateManager;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
-import log.Logger;
+import java.io.File;
+import javax.swing.*;
 
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
-    // менеджер состояния окон
     private final WindowStateManager stateManager;
 
     public MainApplicationFrame() {
-        //Make the big window be indented 50 pixels from each edge
-        //of the screen.
-        int inset = 50;        
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        setBounds(inset, inset,
-            screenSize.width  - inset*2,
-            screenSize.height - inset*2);
 
+        setSize(1200, 800);
+        setLocationRelativeTo(null);
         setContentPane(desktopPane);
-        
-        
+
         LogWindow logWindow = createLogWindow();
         addWindow(logWindow);
 
         GameWindow gameWindow = new GameWindow();
-        gameWindow.setSize(400,  400);
         addWindow(gameWindow);
 
-        // создаём менеджер состояния и загружаем состояние окон
-        stateManager = new WindowStateManager(desktopPane);
+        stateManager = new WindowStateManager();
+        stateManager.register(new MainFrameStateful(this, stateManager));
+        stateManager.register(new InternalFrameStateful(logWindow, stateManager));
+        stateManager.register(new InternalFrameStateful(gameWindow, stateManager));
+
+        File stateFile = new File(System.getProperty("user.home"), ".robots.windows");
+        boolean firstRun = !stateFile.exists();
+
         stateManager.load();
 
-        setJMenuBar(new MainMenuBuilder(this).build());
+        if (firstRun) {
+            setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+            logWindow.setLocation(30, 100);
+            logWindow.setSize(450, 540);
+
+            gameWindow.setLocation(540, 100);
+            gameWindow.setSize(620, 540);
+        }
+
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
         addWindowListener(new WindowAdapter() {
@@ -75,35 +76,25 @@ public class MainApplicationFrame extends JFrame
             }
         });
     }
-    
+
+    public void setLookAndFeel(String className)
+    {
+        try {
+            UIManager.setLookAndFeel(className);
+            SwingUtilities.updateComponentTreeUI(this);
+        } catch (Exception ignored) {}
+    }
+
     protected LogWindow createLogWindow()
     {
-        LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
-        logWindow.setLocation(10,10);
+        LogWindow logWindow = new LogWindow(log.Logger.getDefaultLogSource());
         logWindow.setSize(300, 800);
-        setMinimumSize(logWindow.getSize());
-        logWindow.pack();
-        Logger.debug(Localization.get("log.started"));
         return logWindow;
     }
-    
+
     protected void addWindow(JInternalFrame frame)
     {
         desktopPane.add(frame);
         frame.setVisible(true);
-    }
-
-    public void setLookAndFeel(String className)
-    {
-        try
-        {
-            UIManager.setLookAndFeel(className);
-            SwingUtilities.updateComponentTreeUI(this);
-        }
-        catch (ClassNotFoundException | InstantiationException
-            | IllegalAccessException | UnsupportedLookAndFeelException e)
-        {
-            // just ignore
-        }
     }
 }
