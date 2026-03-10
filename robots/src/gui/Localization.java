@@ -30,6 +30,8 @@ public final class Localization {
 
         RU.put("window.game", "Игровое поле");
         RU.put("window.log", "Протокол работы");
+        RU.put("window.coords", "Координаты робота");
+
 
         RU.put("log.started", "Протокол работает");
 
@@ -68,6 +70,7 @@ public final class Localization {
 
         EN.put("window.game", "Game field");
         EN.put("window.log", "Log window");
+        EN.put("window.coords", "Robot coordinates");
 
         EN.put("log.started", "Log started");
 

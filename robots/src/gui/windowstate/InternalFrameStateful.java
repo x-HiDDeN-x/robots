@@ -71,9 +71,7 @@ public class InternalFrameStateful extends WindowStatefulBase {
 
     @Override
     public void applyState(WindowState s) {
-        frame.setLocation(s.x, s.y);
-        frame.setSize(s.width, s.height);
-
+        super.applyState(s);
         SwingUtilities.invokeLater(() -> {
             try {
                 frame.setMaximum(s.maximized);

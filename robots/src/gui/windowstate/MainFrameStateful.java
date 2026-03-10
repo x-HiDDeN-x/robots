@@ -44,4 +44,12 @@ public class MainFrameStateful extends WindowStatefulBase {
         s.maximized = (state & Frame.MAXIMIZED_BOTH) == Frame.MAXIMIZED_BOTH;
         return s;
     }
+
+    @Override
+    public void applyState(WindowState s) {
+        super.applyState(s);
+        frame.setExtendedState(
+                s.maximized ? Frame.MAXIMIZED_BOTH : Frame.NORMAL
+        );
+    }
 }

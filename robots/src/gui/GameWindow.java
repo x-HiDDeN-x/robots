@@ -6,7 +6,7 @@ import javax.swing.JInternalFrame;
 public class GameWindow extends JInternalFrame {
 
     public GameWindow(RobotModel model) {
-        super("Game", true, true, true, true);
+        super(Localization.get("window.game"), true, true, true, true);
 
         GameVisualizer visualizer = new GameVisualizer(model);
         MouseController controller = new MouseController(model);
